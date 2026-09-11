@@ -1,0 +1,4 @@
+# Concept preview for MBJ Photo, built by HardyWired Tech.
+# Remove this file (or change Disallow to an empty value) at launch.
+User-agent: *
+Disallow: /

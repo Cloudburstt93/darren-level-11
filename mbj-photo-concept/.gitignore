@@ -1,0 +1,9 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# Nothing in this folder is built or installed — tooling lives outside it —
+# but keep these out if anyone runs npm here.
+node_modules/
+.vercel/
