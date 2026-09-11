@@ -38,14 +38,34 @@ servers are case-sensitive even when Windows and macOS are not.
 ## Layout
 
 ```
-index.html          the whole page
-styles.css          all styles, tokens at the top of the file
-script.js           pricing estimate, form validation, gallery lightbox
-images/             optimized JPG + WebP at 800w / 1600w (hero also 2000w)
-favicon.png         32px, generated from the MBJ shutter mark
-apple-touch-icon.png 180px
-robots.txt          Disallow: / while this is a concept
+index.html                                    home
+portfolio/index.html                          all sessions        ->  /portfolio
+portfolio-collections/portfolio/<slug>/       one page per session
+styles.css                                    all styles, tokens at the top
+script.js                                     nav, pricing estimate, validation, lightbox
+images/                                       home page photos, 800w/1600w JPG + WebP
+images/projects/                              session photos, 700w + native JPG + WebP
+favicon.png  apple-touch-icon.png
+robots.txt                                    Disallow: / while this is a concept
 ```
+
+Project URLs deliberately match the ones the live Wix site already uses
+(`/portfolio-collections/portfolio/marquez-family`), so the 18 pages Google has
+indexed keep working instead of 404ing on launch day. Each page is a real directory
+with an `index.html`, so it needs no rewrite rules on any static host.
+
+## Navigation
+
+The header carries a **Work** dropdown listing all 18 sessions plus "All work". It is a
+button with `aria-expanded`, not a hover menu: it opens on click, closes on Escape
+(returning focus to the button) or on a click outside, and collapses behind a **Menu**
+button below 900px. Everything works from the keyboard.
+
+## Regenerating the pages
+
+The HTML is generated from the live portfolio data rather than hand-maintained, so
+adding a session means re-running the generator, not copying a file. The generator
+scripts live outside this folder (they are build tooling, not site files).
 
 ## Before this goes anywhere: confirm the per-person price
 
@@ -107,6 +127,21 @@ Worth knowing before the pitch, because these are live today:
 - **A duration mismatch.** His booking system books all three services as 60-minute
   slots, while the descriptions say 30–45 minutes, 60 minutes, and 1–2 hours. This
   page uses the descriptions.
+
+## Things Marco should look at
+
+- **Nine of his eighteen session URLs are `untitled-project-86f7e7` and similar.** The
+  titles are fine ("Medina family", "Creative Creations"); only the URLs were never
+  named. Renaming them is worth doing, with redirects from the old ones.
+- **The session descriptions say "our", the rest of the site says "I".** His project
+  copy ("our passion for capturing authentic connections") is carried over verbatim
+  rather than silently rewritten.
+- **Alt text on session photos is provenance, not description.** Where Marco captioned
+  a photo his caption is used (85 of the 108 here); the rest read "Photograph from the
+  <session> session". Only the home page images were reviewed one by one and given
+  specific alt text. Writing real alt text for the full library is a task for launch.
+- **Each session page shows 6 photographs** out of the 7-18 he has per session, and says
+  so. The template takes as many as you give it.
 
 ## Notes
 

@@ -45,15 +45,53 @@
 
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="#top" aria-label="MBJ Photo, back to top">
+    <a class="logo" href="./" aria-label="MBJ Photo, home">
       <img src="images/logo-mbj-photo.png" width="192" height="80" alt="MBJ Photo">
     </a>
-    <nav class="site-nav" aria-label="Sections">
-      <a href="#work">Work</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#reviews">Reviews</a>
+
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul class="nav-list">
+        <li class="nav-item has-menu">
+          <button type="button" class="nav-link nav-disclosure" id="work-button"
+                  aria-expanded="false" aria-controls="work-menu">
+            Work<span class="chev" aria-hidden="true"></span>
+          </button>
+          <div class="nav-menu" id="work-menu" hidden>
+            <a class="nav-menu-all" href="portfolio/">All work</a>
+            <ul class="nav-menu-list">
+            <li><a href="portfolio-collections/portfolio/marquez-family/">Marquez Family</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-86f7e7/">Medina family</a></li>
+            <li><a href="portfolio-collections/portfolio/familia-gonzalez/">Familia Gonzalez</a></li>
+            <li><a href="portfolio-collections/portfolio/the-beltrans/">The Beltrans</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project/">Creative Creations</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-8082c0/">Fierce & Confidant</a></li>
+            <li><a href="portfolio-collections/portfolio/denver-shoot/">Denver Shoot</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-5f5207/">Mom & Twins in the Studio</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-547cc8/">Do's & Mora Babies</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-04fc80/">Ariana</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-1b1db5/">Familia Hernandez</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-d01ebf/">City Vibes In SLC</a></li>
+            <li><a href="portfolio-collections/portfolio/familia-chavez/">Familia Chavez</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-38ef05/">Sarah</a></li>
+            <li><a href="portfolio-collections/portfolio/untitled-project-993c22/">Geo's Senior Pics</a></li>
+            <li><a href="portfolio-collections/portfolio/danner-family/">Danner Family</a></li>
+            <li><a href="portfolio-collections/portfolio/familia-mendoza/">Familia Mendoza</a></li>
+            <li><a href="portfolio-collections/portfolio/rachel-john/">Rachel & John</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+        <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
+      </ul>
     </nav>
+
     <a class="btn btn-gold header-cta" href="#book">Book a session</a>
+
+    <button type="button" class="nav-toggle" id="nav-toggle"
+            aria-expanded="false" aria-controls="site-nav">
+      <span class="nav-toggle-bars" aria-hidden="true"></span>
+      <span class="nav-toggle-text">Menu</span>
+    </button>
   </div>
 </header>
 
@@ -466,6 +504,7 @@
     <!-- Real social profile links go here at launch (Instagram, Facebook). The current
          live site links to generic facebook.com / instagram.com placeholders, so nothing
          is linked in this concept until the real profile URLs are confirmed. -->
+    <p class="footer-nav"><a href="./">Home</a> · <a href="portfolio/">Work</a> · <a href="#pricing">Pricing</a> · <a href="#book">Book a session</a></p>
     <p class="footer-legal">© 2026 MBJ Photo. All rights reserved.</p>
     <p class="footer-legal">Website concept by HardyWired Tech</p>
   </div>
