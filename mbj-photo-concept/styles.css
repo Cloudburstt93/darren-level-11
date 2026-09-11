@@ -104,7 +104,7 @@ h1, h2, h3 {
   letter-spacing: -0.015em;
 }
 
-h1 { font-size: clamp(3rem, 10.5vw, 7.4rem); }
+h1 { font-size: clamp(3rem, 10.5vw, 8.5rem); }
 h2 { font-size: clamp(2.1rem, 5vw, 3.5rem); }
 h3 {
   font-size: clamp(1.2rem, 2vw, 1.45rem);
@@ -210,7 +210,11 @@ h3 {
 .hero-grid {
   display: grid;
   gap: clamp(32px, 4vw, 60px);
+  margin-top: clamp(28px, 3.5vw, 44px);
 }
+
+/* Each display word owns its line, so the width animation never rewraps it. */
+.display > span { display: block; }
 
 .hero-sub {
   display: block;
@@ -234,12 +238,40 @@ h3 {
 
 .hero-photo img { display: block; width: 100%; height: auto; }
 
+/* Sits at the bottom of the text column on desktop, where the tall photograph
+   would otherwise leave dead paper. Duplicated by the section below it, so it
+   is content rather than navigation, and it stands down on small screens. */
+.hero-index { display: none; }
+
 @media (min-width: 960px) {
-  .hero-grid {
-    grid-template-columns: 1.08fr 0.92fr;
-    align-items: end;
+  .hero-text { display: flex; flex-direction: column; height: 100%; }
+
+  .hero-index {
+    display: block;
+    margin: auto 0 0;
+    padding: 18px 0 0;
+    border-top: 1px solid var(--rule-light);
+    list-style: none;
+    color: var(--juniper);
   }
-  .hero-text { padding-bottom: 6px; }
+  .hero-index li { padding-block: 5px; }
+}
+
+@media (min-width: 960px) {
+  /* The photograph runs off the right edge of the screen: the page is a
+     photographer's, so one image gets to be bigger than the container. */
+  .hero .wrap {
+    max-width: none;
+    padding-left: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+    padding-right: 0;
+  }
+  /* minmax(0, …) so a wide word can never push the photo's column narrower. */
+  .hero-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+  .hero-text { padding-right: clamp(24px, 4vw, 64px); }
+  .hero-wrap > h1 { padding-right: var(--gutter); }
 }
 
 /* Signature moment: the display line widens as it fades in, once, on load. */
@@ -275,6 +307,28 @@ h3 {
 @media (min-width: 760px) {
   .type-grid { grid-template-columns: repeat(3, 1fr); align-items: start; }
   .type-offset { margin-top: clamp(40px, 6vw, 84px); }
+}
+
+/* ---------- full-bleed photograph ---------- */
+
+.band { margin: 0; }
+
+.band img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Narrower boxes crop in from the sides, so hold the crop left to keep the
+   whole group in frame. */
+@media (max-width: 899px) {
+  .band img { aspect-ratio: 3 / 2; object-position: 22% center; }
+}
+@media (max-width: 599px) {
+  .band img { aspect-ratio: 4 / 3; object-position: 18% center; }
 }
 
 /* ---------- pricing ---------- */
@@ -381,8 +435,23 @@ h3 {
 
 .reviews { padding-block: var(--section-y); scroll-margin-top: calc(var(--header-h) + 12px); }
 
+.review-lead {
+  max-width: 44ch;
+  margin: clamp(36px, 4.5vw, 56px) 0 0;
+}
+
+.review.review-lead p {
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.review-lead figcaption { margin-top: 16px; }
+
 .review-columns {
-  margin-top: clamp(36px, 4.5vw, 56px);
+  margin-top: clamp(40px, 5vw, 64px);
+  padding-top: clamp(36px, 4vw, 52px);
+  border-top: 1px solid var(--rule-light);
   column-count: 1;
   column-gap: clamp(32px, 4vw, 64px);
 }
@@ -415,7 +484,7 @@ h3 {
   gap: clamp(24px, 3vw, 40px);
 }
 
-.approach-text p { max-width: 54ch; font-size: clamp(1.05rem, 1.6vw, 1.2rem); }
+.approach-text p { max-width: 48ch; font-size: clamp(1.15rem, 1.9vw, 1.45rem); line-height: 1.45; }
 
 .signature {
   margin-top: clamp(20px, 2.5vw, 28px);
@@ -445,6 +514,9 @@ h3 {
 }
 
 .book-intro p { max-width: 42ch; margin-top: clamp(20px, 2.5vw, 28px); }
+
+.book-alt { margin-top: 14px; font-size: 0.98rem; }
+.book-alt a { font-weight: 600; text-underline-offset: 5px; }
 
 .estimate {
   margin-top: clamp(32px, 4vw, 44px);

@@ -12,10 +12,16 @@ const FORM_ENDPOINT = "";
 
   /* ---------------------------------------------------------------- pricing */
 
-  const PACKAGE_PRICES = { "Package 1": 300, "Package 2": 450, "Package 3": 600 };
-  const EXTRA_PERSON = 100;
-
   const packageSelect = document.getElementById("package");
+
+  /* Prices come from the markup so the page has one source of truth: the <option>
+     data-price attributes, and data-extra-person on the form. Change them there. */
+  const PACKAGE_PRICES = {};
+  Array.prototype.forEach.call(packageSelect.options, function (option) {
+    if (option.value) { PACKAGE_PRICES[option.value] = Number(option.dataset.price); }
+  });
+  const EXTRA_PERSON = Number(document.getElementById("booking-form").dataset.extraPerson) || 100;
+
   const peopleInput = document.getElementById("people");
   const estimateTotal = document.getElementById("estimate-total");
   const estimateMath = document.getElementById("estimate-math");
@@ -47,7 +53,7 @@ const FORM_ENDPOINT = "";
   /* "Book Package 2" preselects that package before the anchor jump to #book. */
   document.querySelectorAll(".package-link").forEach(function (link) {
     link.addEventListener("click", function () {
-      packageSelect.value = "Package " + link.dataset.package;
+      packageSelect.value = link.dataset.package;
       updateEstimate();
       clearError(packageSelect);
     });

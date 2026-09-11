@@ -47,26 +47,66 @@ apple-touch-icon.png 180px
 robots.txt          Disallow: / while this is a concept
 ```
 
+## Before this goes anywhere: confirm the per-person price
+
+**Marco's current site states two different figures for the same thing.**
+
+- The home page says: "Each additional person added to any shoot: +$100"
+- All three services in his live Wix booking system say: "Each Additional Person
+  is $200"
+
+On a family of four booking the $450 package that is the difference between $750
+and $1,050. This page uses the **$100** figure from the home page. Confirm which is
+right before showing anyone a total.
+
+To change it, edit both of these (they are marked with comments):
+
+- `EXTRA_PERSON` in the page generator, which writes the sentence under the packages
+- `data-extra-person` on the `<form>` in `index.html`, which the live estimate reads
+
 ## What to change at launch
 
-1. **Remove the concept banner** — the first `<p class="concept-banner">` in
+1. **Confirm the per-person price** — see above. This is the only item that can
+   quote a client the wrong number.
+2. **Remove the concept banner** — the first `<p class="concept-banner">` in
    `index.html`.
-2. **Remove `<meta name="robots" content="noindex, nofollow">`** from `<head>`.
-3. **Delete `robots.txt`** (or empty the `Disallow:` value).
-4. **Set `FORM_ENDPOINT`** at the top of `script.js` to a Formspree or Web3Forms URL,
-   or replace the form with a Cal.com embed. Until then the form validates and shows
-   its success state without sending anything.
-5. **Add real contact details** — phone, email — and real social profile links. There
-   is an HTML comment in the footer marking where the social links go. Nothing is
-   linked today because the current live site points at generic `facebook.com` /
-   `instagram.com` placeholders.
-6. **Update the Open Graph and Twitter image paths** in `<head>` from relative paths
-   to absolute production URLs, and add `telephone`, `email`, and `sameAs` to the
-   JSON-LD block at the bottom of `index.html`.
-7. **Confirm the per-person pricing** with Marco — the page states that package prices
-   cover one person and each additional person adds $100.
-8. **Swap in full-resolution originals** from Marco. The photos here were pulled from
-   the current Wix site at the largest size it serves.
+3. **Remove `<meta name="robots" content="noindex, nofollow">`** from `<head>`.
+4. **Delete `robots.txt`** (or empty the `Disallow:` value).
+5. **Decide how booking works.** Right now "Pick a time on my calendar" links out to
+   Marco's existing Wix booking page so nothing he relies on is lost. At launch,
+   either embed that calendar on this page or replace it with a Cal.com embed.
+6. **Set `FORM_ENDPOINT`** at the top of `script.js` to a Formspree or Web3Forms URL.
+   Until then the form validates and shows its success state without sending
+   anything.
+7. **Add real contact details** — phone and email. Neither appears anywhere on his
+   current site, so there was nothing to carry over.
+8. **Add a photo of Marco and two lines about him** to the "Moments that become
+   treasures" section. People are hiring a person to make them feel comfortable on
+   camera, and right now they never see his face. The section is built to take a
+   portrait beside the text.
+9. **Add real social profile links** — there is an HTML comment in the footer marking
+   where. Nothing is linked today because his current footer icons point at bare
+   `facebook.com` / `instagram.com` / `x.com` / `tiktok.com` / `youtube.com`.
+10. **Update the Open Graph and Twitter image paths** in `<head>` from relative paths
+    to absolute production URLs, and add `telephone`, `email`, and `sameAs` to the
+    JSON-LD block at the bottom of `index.html`.
+11. **Swap in full-resolution originals** from Marco. The photos here were pulled from
+    the current Wix site at the largest size it serves.
+
+## What the current site already does that this concept does not
+
+Worth knowing before the pitch, because these are live today:
+
+- **Online booking.** `mbjphoto.com/book-online` works, with three bookable services:
+  Essential $300, Classic $450, Premium $600. The packages on this page are named to
+  match those, since that is what a client sees at checkout. His home page calls the
+  same three "Package 1/2/3"; his booking descriptions carry both names.
+- **A store.** Published product pages for framed photos, prints, digital downloads
+  and graduation prints across four categories. This one-page concept does not
+  replace the store, and it would need its own plan.
+- **A duration mismatch.** His booking system books all three services as 60-minute
+  slots, while the descriptions say 30–45 minutes, 60 minutes, and 1–2 hours. This
+  page uses the descriptions.
 
 ## Notes
 
