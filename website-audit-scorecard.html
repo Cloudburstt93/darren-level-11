@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Website Audit Scorecard</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#15181d; --muted:#5d6675;
+    --line:#dfe3ea; --accent:#1f6feb; --good:#1a7f45; --ok:#a06a00; --bad:#b3261e;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 16px 64px}
+
+  header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;
+             padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:24px}
+  h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13px}
+  .sub b{color:var(--ink);font-weight:600}
+
+  .totalbox{text-align:right;white-space:nowrap}
+  .totalnum{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.02em}
+  .totallbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+  button{font:inherit;font-size:13px;font-weight:500;padding:8px 14px;border-radius:6px;
+         border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;box-shadow:var(--shadow)}
+  button:hover{border-color:#b9c0cc}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{background:#1a5fd0}
+
+  .cat{background:var(--card);border:1px solid var(--line);border-radius:10px;
+       padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow);break-inside:avoid}
+  .cathead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .catname{font-size:17px;font-weight:650;margin:0}
+  .catweight{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+  .scorewrap{display:flex;align-items:center;gap:8px}
+  .scorewrap label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  input[type=number]{font:inherit;font-size:16px;font-weight:650;width:62px;padding:6px 8px;text-align:center;
+                     border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+  .grade{display:inline-block;min-width:74px;text-align:center;font-size:12px;font-weight:650;
+         padding:5px 10px;border-radius:999px;background:#eef0f4;color:var(--muted)}
+  .grade.good{background:#e4f5ea;color:var(--good)} .grade.ok{background:#fdf1dc;color:var(--ok)}
+  .grade.bad{background:#fdeceb;color:var(--bad)}
+
+  ul.checks{list-style:none;margin:0 0 12px;padding:0}
+  ul.checks li{display:flex;gap:9px;align-items:flex-start;padding:3px 0;font-size:14px}
+  ul.checks input{margin:3px 0 0;width:15px;height:15px;flex:none;accent-color:var(--accent)}
+  ul.checks label{cursor:pointer}
+  ul.checks li.on label{color:var(--ink)} ul.checks li.off label{color:var(--muted)}
+
+  textarea{font:inherit;font-size:13px;width:100%;min-height:62px;padding:9px 11px;resize:vertical;
+           border:1px solid var(--line);border-radius:6px;background:#fbfcfd;color:var(--ink);white-space:pre-wrap}
+  .noteslbl{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px}
+
+  footer.legend{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);
+                font-size:12px;color:var(--muted)}
+  #fileInput{display:none}
+
+  @media print{
+    :root{--bg:#fff;--shadow:none}
+    body{font-size:11.5pt}
+    .toolbar,.noprint{display:none!important}
+    .wrap{max-width:none;padding:0}
+    .cat{border:1px solid #c8ccd4;box-shadow:none;margin-bottom:10px;padding:12px 14px}
+    textarea{border:none;background:none;padding:0;min-height:0;height:auto;overflow:visible}
+    input[type=number]{border:none}
+    @page{margin:14mm}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Website Audit Scorecard</h1>
+      <div class="sub">
+        Site: <b id="metaDomain">—</b> &nbsp;·&nbsp; Audited: <b id="metaDate">—</b>
+        &nbsp;·&nbsp; <span id="metaGen">no data loaded</span>
+      </div>
+    </div>
+    <div class="totalbox">
+      <div class="totalnum" id="totalNum">—</div>
+      <div class="totallbl" id="totalLbl">weighted score</div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button class="primary" onclick="document.getElementById('fileInput').click()">Open file…</button>
+    <button onclick="exportJSON()">Save JSON</button>
+    <button onclick="window.print()">Print / PDF</button>
+    <button onclick="clearAll()">Clear</button>
+    <input type="file" id="fileInput" accept=".json,application/json">
+  </div>
+
+  <div id="cats"></div>
+
+  <footer class="legend">
+    Scores are 0&ndash;10 per category. A blank score means <b>unscored</b> &mdash; that category is
+    excluded from the weighted total rather than counted as zero. The weighted total is normalised
+    across whichever categories carry a score.
+  </footer>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ *
+ * CATS — the single source of truth for category ids, weights and the
+ * order of the checks. Checkbox element ids are built as
+ * `${cat.id}-c${index}`, so the first check of "perf" is "perf-c0" and
+ * the last is "perf-c4". audit.sh writes to these exact ids.
+ * ------------------------------------------------------------------ */
+const CATS = [
+  { id:'perf', name:'Performance', weight:20, checks:[
+      'Largest Contentful Paint is 2.5s or better (mobile)',
+      'Interaction to Next Paint is 200ms or better',
+      'Cumulative Layout Shift is 0.10 or better',
+      'Lighthouse performance score is 90 or above',
+      'No single optimisation opportunity would save 1s or more' ]},
+
+  { id:'mobile', name:'Mobile Experience', weight:15, checks:[
+      'Tap targets are at least 48px and not crowded together',
+      'No horizontal scrolling at 375px width',
+      'Body text is readable without pinch-zooming',
+      'Forms are usable one-handed and raise the right keyboard',
+      'Sticky bars, chat widgets and popups do not cover content' ]},
+
+  { id:'convert', name:'Conversion', weight:15, checks:[
+      'Phone number is tap-to-call and visible without scrolling',
+      'The primary call-to-action is obvious on every page',
+      'Contact form actually submits and confirms receipt',
+      'Hours, service area and pricing posture are findable',
+      'Trust signals present: reviews, real photos, licence, guarantee' ]},
+
+  { id:'seo', name:'SEO Foundations', weight:20, checks:[
+      'robots.txt exists and does not block the site',
+      'sitemap.xml exists, parses, and lists this domain’s URLs',
+      'Every crawled page has a unique title tag',
+      'Every crawled page has a unique meta description',
+      'Exactly one H1 per page and 95%+ of images carry alt text' ]},
+
+  { id:'security', name:'Security & Trust', weight:15, checks:[
+      'HTTPS serves a valid certificate that chains to a trusted root',
+      'Certificate has more than 30 days left before expiry',
+      'HSTS, X-Content-Type-Options and clickjacking protection all set',
+      'Content-Security-Policy and Referrer-Policy are set',
+      'SPF and DMARC published, and a DKIM selector resolves' ]},
+
+  { id:'a11y', name:'Accessibility', weight:10, checks:[
+      'No critical or serious errors on the homepage',
+      'Every meaningful image has alt text',
+      'Colour contrast meets WCAG 2.1 AA',
+      'Every form input has an associated label',
+      'Document language is set and heading order is sane' ]},
+
+  { id:'hygiene', name:'Site Hygiene', weight:5, checks:[
+      'No broken links (4xx or 5xx)',
+      'No redirect chains — links resolve in a single hop',
+      'No insecure http:// links (mixed content)',
+      'A missing page returns a real 404 status, not a soft 200',
+      'No leftover placeholder links (example.com, "#", lorem ipsum)' ]}
+];
+
+/* Render the card from CATS. */
+function build(){
+  document.getElementById('cats').innerHTML = CATS.map(c => `
+    <section class="cat">
+      <div class="cathead">
+        <h2 class="catname">${c.name}<span class="catweight">weight ${c.weight}</span></h2>
+        <div class="scorewrap">
+          <span class="grade" id="${c.id}-grade">unscored</span>
+          <label for="${c.id}-score">Score</label>
+          <input type="number" id="${c.id}-score" min="0" max="10" step="1" placeholder="—"
+                 oninput="recalc()">
+          <span style="color:var(--muted);font-size:13px">/10</span>
+        </div>
+      </div>
+      <ul class="checks">
+        ${c.checks.map((t,i) => `
+          <li class="off" id="${c.id}-c${i}-li">
+            <input type="checkbox" id="${c.id}-c${i}" onchange="markCheck(this)">
+            <label for="${c.id}-c${i}">${t}</label>
+          </li>`).join('')}
+      </ul>
+      <span class="noteslbl">Notes / measured values</span>
+      <textarea id="${c.id}-notes" placeholder="Measured values and findings…"
+                oninput="autoGrow(this)"></textarea>
+    </section>`).join('');
+  recalc();
+}
+
+function markCheck(el){
+  document.getElementById(el.id + '-li').className = el.checked ? 'on' : 'off';
+}
+function autoGrow(t){ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; }
+
+/* Weighted total over scored categories only, normalised to 100. */
+function recalc(){
+  let pts = 0, wt = 0;
+  CATS.forEach(c => {
+    const raw = document.getElementById(c.id+'-score').value.trim();
+    const g   = document.getElementById(c.id+'-grade');
+    if (raw === '' || isNaN(Number(raw))) { g.className='grade'; g.textContent='unscored'; return; }
+    const s = Math.max(0, Math.min(10, Number(raw)));
+    pts += (s/10) * c.weight;  wt += c.weight;
+    g.className = 'grade ' + (s >= 8 ? 'good' : s >= 5 ? 'ok' : 'bad');
+    g.textContent = s >= 8 ? 'solid' : s >= 5 ? 'needs work' : 'urgent';
+  });
+  const num = document.getElementById('totalNum'), lbl = document.getElementById('totalLbl');
+  if (!wt) { num.textContent='—'; lbl.textContent='weighted score'; return; }
+  num.textContent = Math.round((pts/wt)*100);
+  lbl.textContent = wt === 100 ? 'weighted score' : `weighted score · ${wt} of 100 pts scored`;
+}
+
+/* ------------------------------------------------------------------ *
+ * restore(data) — load a JSON audit file into the card.
+ *
+ * Expected shape (schema 1), exactly what audit.sh emits:
+ *
+ * {
+ *   "schema": 1,
+ *   "meta": {
+ *     "domain":    "example.com",
+ *     "url":       "https://example.com/",
+ *     "date":      "2026-09-14",
+ *     "generator": "audit.sh 1.0"
+ *   },
+ *   "categories": {
+ *     "perf": {
+ *       "score": 6,                       // 0-10 integer, or null = unscored
+ *       "notes": "LCP 3.4s | CLS 0.02",   // free text, shown in the card
+ *       "checks": {                       // keys are the checkbox element ids
+ *         "perf-c0": false, "perf-c1": true,
+ *         "perf-c2": true,  "perf-c3": false, "perf-c4": false
+ *       }
+ *     },
+ *     "mobile": { ... }, "convert": { ... }, "seo": { ... },
+ *     "security": { ... }, "a11y": { ... }, "hygiene": { ... }
+ *   }
+ * }
+ *
+ * Tolerances: missing categories, missing checks and missing notes are
+ * simply left at their defaults. "checks" may also be given as an array
+ * of the ids that are ticked, e.g. ["perf-c1","perf-c2"].
+ * ------------------------------------------------------------------ */
+function restore(data){
+  if (!data || typeof data !== 'object') throw new Error('not an object');
+  const meta = data.meta || {};
+  document.getElementById('metaDomain').textContent = meta.domain || meta.url || '—';
+  document.getElementById('metaDate').textContent   = meta.date || '—';
+  document.getElementById('metaGen').textContent    = meta.generator || 'loaded';
+
+  const cats = data.categories || {};
+  CATS.forEach(c => {
+    const d = cats[c.id] || {};
+
+    const sEl = document.getElementById(c.id+'-score');
+    sEl.value = (d.score === null || d.score === undefined || d.score === '') ? '' : d.score;
+
+    const nEl = document.getElementById(c.id+'-notes');
+    nEl.value = d.notes || '';
+    autoGrow(nEl);
+
+    const ticked = Array.isArray(d.checks)
+      ? new Set(d.checks)
+      : new Set(Object.keys(d.checks || {}).filter(k => d.checks[k]));
+    c.checks.forEach((_, i) => {
+      const id = `${c.id}-c${i}`;
+      const box = document.getElementById(id);
+      box.checked = ticked.has(id);
+      markCheck(box);
+    });
+  });
+  recalc();
+}
+
+/* Serialise the current card back out in the same shape. */
+function collect(){
+  const out = { schema:1,
+    meta:{ domain:document.getElementById('metaDomain').textContent,
+           date:document.getElementById('metaDate').textContent,
+           generator:document.getElementById('metaGen').textContent },
+    categories:{} };
+  CATS.forEach(c => {
+    const raw = document.getElementById(c.id+'-score').value.trim();
+    const checks = {};
+    c.checks.forEach((_,i) => {
+      const id = `${c.id}-c${i}`;
+      checks[id] = document.getElementById(id).checked;
+    });
+    out.categories[c.id] = {
+      score: raw === '' ? null : Number(raw),
+      notes: document.getElementById(c.id+'-notes').value,
+      checks
+    };
+  });
+  return out;
+}
+
+function exportJSON(){
+  const d = collect();
+  const name = (d.meta.domain || 'audit').replace(/[^a-z0-9.-]/gi,'_')
+             + '-' + (d.meta.date || 'edited') + '.json';
+  const blob = new Blob([JSON.stringify(d,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+function clearAll(){
+  CATS.forEach(c => {
+    document.getElementById(c.id+'-score').value = '';
+    document.getElementById(c.id+'-notes').value = '';
+    c.checks.forEach((_,i) => {
+      const b = document.getElementById(`${c.id}-c${i}`); b.checked = false; markCheck(b);
+    });
+  });
+  ['metaDomain','metaDate'].forEach(i => document.getElementById(i).textContent = '—');
+  document.getElementById('metaGen').textContent = 'no data loaded';
+  recalc();
+}
+
+document.getElementById('fileInput').addEventListener('change', function(ev){
+  const f = ev.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try { restore(JSON.parse(e.target.result)); }
+    catch (err) { alert('Could not read that file as an audit JSON:\n\n' + err.message); }
+  };
+  r.readAsText(f);
+  ev.target.value = '';
+});
+
+build();
+</script>
+</body>
+</html>

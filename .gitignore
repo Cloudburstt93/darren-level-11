@@ -1,0 +1,3 @@
+# Client audit output — keep it off git.
+# Re-run ./audit.sh <domain> to regenerate.
+audits/
