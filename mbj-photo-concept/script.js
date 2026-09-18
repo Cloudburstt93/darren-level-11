@@ -1,11 +1,7 @@
 /* MBJ Photo — redesign concept by HardyWired Tech */
 
-/* Where the booking form posts. Paste a form endpoint URL here to make the form live —
-   a Formspree endpoint (https://formspree.io/f/xxxxxxx) or a Web3Forms endpoint
-   (https://api.web3forms.com/submit, with your access key added as a hidden field).
-   While this is an empty string the form validates and shows its success state without
-   sending anything, which is what the concept build ships with. */
-const FORM_ENDPOINT = "";
+/* The booking endpoint lives on the form's own action attribute in index.html, not
+   here, so the form still posts when this script fails to load. */
 
 (function () {
   "use strict";
@@ -76,6 +72,11 @@ const FORM_ENDPOINT = "";
   const form = document.getElementById("booking-form");
 
   if (form) {
+    /* Hand validation over to this script only once it is running. Without it the
+       browser's own required/type checks stay in charge. */
+    form.noValidate = true;
+
+    const FORM_ENDPOINT = form.getAttribute("action") || "";
     const packageSelect = document.getElementById("package");
     const peopleInput = document.getElementById("people");
     const estimateTotal = document.getElementById("estimate-total");

@@ -103,7 +103,7 @@
            animation widens them from 62% to 125%, and a headline free to rewrap
            mid-animation would drag the layout with it. -->
       <h1 id="hero-title">
-        <span class="display" id="hero-display"><span>Portrait</span><span>Creations</span></span>
+        <span class="display" id="hero-display"><span>Portrait</span> <span>Creations</span></span>
         <span class="hero-sub">Portrait photography in Grand Junction, Vail and surrounding areas</span>
       </h1>
       <div class="hero-grid">
@@ -436,7 +436,11 @@
       </div>
 
       <div class="book-form-wrap" id="book-form-wrap">
-        <form id="booking-form" novalidate data-extra-person="100">
+        <form id="booking-form" data-extra-person="100">
+          <noscript>
+            <p class="form-note">This preview's form needs JavaScript. On the live site it
+            will post normally either way.</p>
+          </noscript>
           <div class="field">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" autocomplete="name" required aria-describedby="name-error">

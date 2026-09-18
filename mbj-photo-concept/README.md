@@ -46,8 +46,15 @@ script.js                                     nav, pricing estimate, validation,
 images/                                       home page photos, 800w/1600w JPG + WebP
 images/projects/                              session photos, 700w + native JPG + WebP
 favicon.png  apple-touch-icon.png
+404.html                                      served for any missing URL
+sitemap.xml                                   all 20 pages, regenerated with the site
 robots.txt                                    Disallow: / while this is a concept
 ```
+
+`404.html` uses root-relative paths throughout, because it is served in place of a URL
+at any depth — a relative stylesheet would 404 alongside the page it was meant to
+style. `sitemap.xml` and `robots.txt` both name the production domain, which comes from
+the same `ORIGIN` constant as the social tags.
 
 Project URLs deliberately match the ones the live Wix site already uses
 (`/portfolio-collections/portfolio/marquez-family`), so the 18 pages Google has
@@ -95,9 +102,14 @@ To change it, edit both of these (they are marked with comments):
 5. **Decide how booking works.** Right now "Pick a time on my calendar" links out to
    Marco's existing Wix booking page so nothing he relies on is lost. At launch,
    either embed that calendar on this page or replace it with a Cal.com embed.
-6. **Set `FORM_ENDPOINT`** at the top of `script.js` to a Formspree or Web3Forms URL.
-   Until then the form validates and shows its success state without sending
-   anything.
+6. **Give the booking form an endpoint.** Put a Formspree
+   (`https://formspree.io/f/xxxxxxx`) or Web3Forms (`https://api.web3forms.com/submit`,
+   plus a hidden `access_key` field) URL on the form's own `action` attribute in
+   `index.html` — `FORM_ENDPOINT` in the page generator writes it there. It lives on
+   the form rather than in the script so the form still posts if JavaScript fails to
+   load; `script.js` reads it from the action and enhances the submit with inline
+   validation and the in-page confirmation. While it is empty the form validates,
+   confirms without sending, and a `<noscript>` note says so.
 7. **Add real contact details** — phone and email. Neither appears anywhere on his
    current site, so there was nothing to carry over.
 8. **Add a photo of Marco and two lines about him** to the "Moments that become
