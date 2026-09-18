@@ -107,9 +107,12 @@ To change it, edit both of these (they are marked with comments):
 9. **Add real social profile links** — there is an HTML comment in the footer marking
    where. Nothing is linked today because his current footer icons point at bare
    `facebook.com` / `instagram.com` / `x.com` / `tiktok.com` / `youtube.com`.
-10. **Update the Open Graph and Twitter image paths** in `<head>` from relative paths
-    to absolute production URLs, and add `telephone`, `email`, and `sameAs` to the
-    JSON-LD block at the bottom of `index.html`.
+10. **Check the share domain.** Open Graph needs absolute URLs, so every page's
+    social tags are built from one constant — `ORIGIN` in the page generator, set to
+    `https://www.mbjphoto.com`. If the site goes live anywhere else first (a Vercel
+    preview domain, say), change that one value and rebuild, or shared links will show
+    a blank card. Also add `telephone`, `email`, and `sameAs` to the JSON-LD block at
+    the bottom of `index.html`.
 11. **Swap in full-resolution originals** from Marco. The photos here were pulled from
     the current Wix site at the largest size it serves.
 
