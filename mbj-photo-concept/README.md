@@ -74,27 +74,32 @@ The HTML is generated from the live portfolio data rather than hand-maintained, 
 adding a session means re-running the generator, not copying a file. The generator
 scripts live outside this folder (they are build tooling, not site files).
 
-## Before this goes anywhere: confirm the per-person price
+## The per-person price, and a correction Marco needs to make
 
-**Marco's current site states two different figures for the same thing.**
+**Confirmed: each additional person is +$100.** That matches his home page, and it is
+what this site quotes. The live estimate and the sentence under the packages both read
+it from one place, so it stays consistent.
 
-- The home page says: "Each additional person added to any shoot: +$100"
-- All three services in his live Wix booking system say: "Each Additional Person
-  is $200"
+**His booking system disagrees, and it is the one that is wrong.** All three services
+in his live Wix Bookings still say:
 
-On a family of four booking the $450 package that is the difference between $750
-and $1,050. This page uses the **$100** figure from the home page. Confirm which is
-right before showing anyone a total.
+- Essential — "Any Extra Person is $200"
+- Classic — "Each Additional Person is $200"
+- Premium — "Each Additional Person is $200"
 
-To change it, edit both of these (they are marked with comments):
+Anyone booking through his calendar today is being quoted **double** the add-on rate.
+On a family of four that is $1,050 instead of $750. Worth fixing in Wix whether or not
+this redesign goes ahead.
+
+If the figure ever changes, it lives in two marked places:
 
 - `EXTRA_PERSON` in the page generator, which writes the sentence under the packages
 - `data-extra-person` on the `<form>` in `index.html`, which the live estimate reads
 
 ## What to change at launch
 
-1. **Confirm the per-person price** — see above. This is the only item that can
-   quote a client the wrong number.
+1. **Correct the $200 per-person line** in the three Wix booking service descriptions,
+   so his calendar stops quoting double. This site is already correct at $100.
 2. **Remove the concept banner** — the first `<p class="concept-banner">` in
    `index.html`.
 3. **Remove `<meta name="robots" content="noindex, nofollow">`** from `<head>`.
