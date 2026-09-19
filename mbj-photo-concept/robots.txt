@@ -4,4 +4,4 @@
 User-agent: *
 Disallow: /
 
-Sitemap: https://www.mbjphoto.com/sitemap.xml
+Sitemap: https://darren-level-11-1pnk.vercel.app/sitemap.xml
