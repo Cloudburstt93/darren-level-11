@@ -224,25 +224,20 @@
 
   /* --------------------------------------------------------------------- lightbox */
 
-  const shots = Array.prototype.slice.call(document.querySelectorAll(".shot"));
-  const lightbox = document.getElementById("lightbox");
-
-  if (shots.length >= 4 && lightbox && typeof lightbox.showModal === "function") {
+  /* Shared by the session-page photo grids and the home page carousel below —
+     each supplies its own photo list and its own trigger(s); everything else
+     (keyboard, swipe, focus return, backdrop close) behaves identically either
+     way. Returns null if there is nothing to wire it to. */
+  function wireLightbox(photos, triggerSpecs) {
+    const lightbox = document.getElementById("lightbox");
+    if (!photos.length || !lightbox || typeof lightbox.showModal !== "function") {
+      return null;
+    }
     const lightboxImage = document.getElementById("lightbox-image");
     const lightboxSource = document.getElementById("lightbox-source");
     const counter = document.getElementById("lightbox-counter");
     let current = 0;
     let opener = null;
-
-    const photos = shots.map(function (shot) {
-      const img = shot.querySelector("img");
-      const src = img.getAttribute("src");
-      return {
-        jpg: shot.dataset.full || src.replace("-800.jpg", "-1600.jpg"),
-        webp: shot.dataset.fullWebp || src.replace("-800.jpg", "-1600.webp"),
-        alt: img.getAttribute("alt")
-      };
-    });
 
     function render(index) {
       current = (index + photos.length) % photos.length;
@@ -254,13 +249,15 @@
     }
 
     function open(index, trigger) {
-      opener = trigger;
+      opener = trigger || null;
       render(index);
       lightbox.showModal();
     }
 
-    shots.forEach(function (shot, index) {
-      shot.addEventListener("click", function () { open(index, shot); });
+    triggerSpecs.forEach(function (spec) {
+      spec.el.addEventListener("click", function () {
+        open(typeof spec.index === "function" ? spec.index() : spec.index, spec.el);
+      });
     });
 
     document.getElementById("lightbox-prev").addEventListener("click", function () { render(current - 1); });
@@ -292,8 +289,136 @@
       if (Math.abs(dx) > 40) { render(dx < 0 ? current + 1 : current - 1); }
       touchStartX = null;
     }, { passive: true });
-  } else if (lightbox) {
-    lightbox.remove();
-    shots.forEach(function (shot) { shot.replaceWith.apply(shot, shot.childNodes); });
+
+    return { open: open };
+  }
+
+  const workCarousel = document.getElementById("work-carousel");
+
+  if (workCarousel) {
+    wireCarousel(workCarousel);
+  } else {
+    /* Session pages: unchanged from before this was extracted into a function —
+       same >= 4 threshold, same graceful removal below it. */
+    const shots = Array.prototype.slice.call(document.querySelectorAll(".shot"));
+    const lightbox = document.getElementById("lightbox");
+
+    if (shots.length >= 4 && lightbox) {
+      const photos = shots.map(function (shot) {
+        const img = shot.querySelector("img");
+        const src = img.getAttribute("src");
+        return {
+          jpg: shot.dataset.full || src.replace("-800.jpg", "-1600.jpg"),
+          webp: shot.dataset.fullWebp || src.replace("-800.jpg", "-1600.webp"),
+          alt: img.getAttribute("alt")
+        };
+      });
+      wireLightbox(photos, shots.map(function (shot, index) { return { el: shot, index: index }; }));
+    } else if (lightbox) {
+      lightbox.remove();
+      shots.forEach(function (shot) { shot.replaceWith.apply(shot, shot.childNodes); });
+    }
+  }
+
+  /* ------------------------------------------------------------------ carousel */
+
+  /* One photo at a time, right to left, autoplaying with full visitor control.
+     Clicking the current photo opens it in the same lightbox used elsewhere,
+     starting at whatever the carousel is showing; the lightbox then browses
+     the complete set, same as the grid does on session pages. */
+  function wireCarousel(root) {
+    const dataEl = document.getElementById("work-carousel-photos");
+    const photos = dataEl ? JSON.parse(dataEl.textContent) : [];
+    if (photos.length < 2) { return; }
+
+    const stage = document.getElementById("carousel-slide");
+    const img = document.getElementById("carousel-image");
+    const source = document.getElementById("carousel-source");
+    const prevBtn = document.getElementById("carousel-prev");
+    const nextBtn = document.getElementById("carousel-next");
+    const playBtn = document.getElementById("carousel-play");
+    const playIcon = document.getElementById("carousel-play-icon");
+    const counter = document.getElementById("carousel-counter");
+    const INTERVAL_MS = 5000;
+
+    const reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let index = 0;
+    let playing = false;
+    let timer = null;
+
+    function renderSlide(direction) {
+      const photo = photos[index];
+      source.srcset = photo.webp800 + " 800w, " + photo.webp1600 + " 1600w";
+      img.srcset = photo.jpg800 + " 800w, " + photo.jpg1600 + " 1600w";
+      img.src = photo.jpg800;
+      img.alt = photo.alt;
+      img.width = photo.w;
+      img.height = photo.h;
+      counter.textContent = (index + 1) + " of " + photos.length;
+      if (direction) {
+        img.classList.remove("enter-next", "enter-prev");
+        void img.offsetWidth; /* restart the animation on repeat clicks */
+        img.classList.add(direction === "next" ? "enter-next" : "enter-prev");
+      }
+    }
+
+    function go(newIndex, direction) {
+      index = (newIndex + photos.length) % photos.length;
+      renderSlide(direction);
+    }
+
+    function stopAutoplay() {
+      if (timer) { window.clearInterval(timer); timer = null; }
+    }
+
+    function setPlaying(value) {
+      playing = value;
+      playIcon.textContent = playing ? "\u2759\u2759" : "\u25B6";
+      playBtn.setAttribute("aria-label", playing ? "Pause slideshow" : "Play slideshow");
+      playBtn.setAttribute("aria-pressed", playing ? "true" : "false");
+      /* Don't make the counter a live region while it's changing on its own
+         every few seconds — that would read out to screen readers on a timer
+         nobody asked for. It becomes live once the visitor takes control. */
+      counter.setAttribute("aria-live", playing ? "off" : "polite");
+      stopAutoplay();
+      if (playing) { timer = window.setInterval(function () { go(index + 1, "next"); }, INTERVAL_MS); }
+    }
+
+    /* Manual interaction stops autoplay for good, matching normal carousel
+       etiquette: once a visitor takes the wheel, it stays theirs. */
+    function manual(direction) {
+      go(direction === "next" ? index + 1 : index - 1, direction);
+      if (playing) { setPlaying(false); }
+    }
+
+    prevBtn.addEventListener("click", function () { manual("prev"); });
+    nextBtn.addEventListener("click", function () { manual("next"); });
+    playBtn.addEventListener("click", function () { setPlaying(!playing); });
+
+    let touchStartX = null;
+    root.addEventListener("touchstart", function (event) {
+      touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+    root.addEventListener("touchend", function (event) {
+      if (touchStartX === null) { return; }
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) { manual(dx < 0 ? "next" : "prev"); }
+      touchStartX = null;
+    }, { passive: true });
+
+    root.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowLeft") { event.preventDefault(); manual("prev"); }
+      if (event.key === "ArrowRight") { event.preventDefault(); manual("next"); }
+    });
+
+    renderSlide(null);
+    setPlaying(!reduceMotion); /* never autostart motion someone asked to reduce */
+
+    wireLightbox(
+      photos.map(function (p) { return { jpg: p.jpg1600, webp: p.webp1600, alt: p.alt }; }),
+      [{ el: stage, index: function () { return index; } }]
+    );
   }
 })();

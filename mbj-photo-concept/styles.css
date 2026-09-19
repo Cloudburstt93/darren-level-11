@@ -556,6 +556,95 @@ h3 {
 @media (min-width: 900px) { .gallery { column-count: 3; } }
 @media (min-width: 1400px) { .gallery { column-count: 4; } }
 
+/* ---------- home page carousel ---------- */
+/* The session-page galleries above (.gallery / .shot) are untouched by this —
+   this is scoped to the home page's "Recent work" section only. */
+
+.carousel { margin-top: clamp(36px, 4.5vw, 56px); }
+
+/* Square rather than favoring one orientation: the source photos are a mix
+   of portrait and landscape, and a square stage keeps letterboxing modest and
+   roughly even either way, instead of badly squeezing whichever orientation
+   the box doesn't match (verified against both a 3:2 and a 4:5 box first —
+   both left one orientation using well under half the frame). */
+.carousel-stage {
+  max-width: 720px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  background: var(--sage-paper);
+  overflow: hidden;
+}
+
+.carousel-slide {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.carousel-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* A brief directional settle, not a full slide-across — matches the
+   restraint of the headline's own load animation. Neutralized under
+   prefers-reduced-motion by the global rule near the end of this file. */
+.carousel-slide img.enter-next { animation: carousel-enter-next 0.45s ease-out; }
+.carousel-slide img.enter-prev { animation: carousel-enter-prev 0.45s ease-out; }
+
+@keyframes carousel-enter-next {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes carousel-enter-prev {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 2vw, 22px);
+  margin-top: clamp(18px, 2.2vw, 26px);
+}
+
+.carousel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rule-light);
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.carousel-btn:hover { border-color: var(--ink); }
+
+.carousel-play { font-size: 0.8rem; }
+
+.carousel-counter {
+  min-width: 5.5em;
+  margin: 0;
+  text-align: center;
+  color: var(--juniper);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 700px) {
+  .carousel-stage { max-width: 900px; }
+}
+
 /* ---------- reviews ---------- */
 
 .reviews { padding-block: var(--section-y); scroll-margin-top: calc(var(--header-h) + 12px); }
