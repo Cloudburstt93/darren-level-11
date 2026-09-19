@@ -1,0 +1,7 @@
+# Concept preview for MBJ Photo, built by HardyWired Tech.
+# At launch: delete the Disallow line (or empty its value) and remove the
+# noindex meta tag from every page.
+User-agent: *
+Disallow: /
+
+Sitemap: https://www.mbjphoto.com/sitemap.xml
