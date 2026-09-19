@@ -68,6 +68,37 @@ button with `aria-expanded`, not a hover menu: it opens on click, closes on Esca
 (returning focus to the button) or on a click outside, and collapses behind a **Menu**
 button below 900px. Everything works from the keyboard.
 
+## The "Recent work" slideshow
+
+One photograph at a time on the home page, autoplaying every 5 seconds, instead of a
+long scrolling grid. The session pages still use the grid — a slideshow is the wrong
+shape for browsing a whole shoot.
+
+The photo sits on a deep field with a hairline of its own and a second hairline standing
+off the outside, so it reads as a framed print rather than an image bleeding into the
+page. The field is a fixed square at every width: the set is a mix of portrait and
+landscape, and a square keeps the surround roughly even either way instead of badly
+squeezing whichever orientation the box doesn't match.
+
+Prev, pause and next sit on the photo itself — the middle of each side edge and the
+centre — and stay invisible until someone reaches for them: hover, keyboard focus, or a
+first tap on a touch screen (that tap reveals the controls, the next one opens the photo
+viewer). Anything focusable has to be visible when it is focused, so `:focus-within`
+brings them up for keyboard users as well.
+
+Changing photos crossfades two stacked layers rather than swapping `src` on a single
+`<img>`. The incoming photo is loaded onto the idle layer and `decode()`d before it is
+revealed, so the change is one clean move; swapping in place showed the old photo through
+the start of the animation and then snapped to the new one part way in. A decode that
+stalls is capped at 800ms so one slow file can't freeze the slideshow, the photo after
+the current one is parked on the idle layer ready to go, and rapid clicks discard the
+transitions they overtake.
+
+Autoplay stops for good the moment a visitor takes over, never starts under
+`prefers-reduced-motion`, and the counter only becomes a live region once the slideshow
+is paused — otherwise it would read itself out to screen readers on a timer nobody asked
+for.
+
 ## Regenerating the pages
 
 The HTML is generated from the live portfolio data rather than hand-maintained, so
@@ -170,6 +201,6 @@ Worth knowing before the pitch, because these are live today:
 ## Notes
 
 - No `localStorage` or `sessionStorage` is used.
-- The only animation is the hero headline widening once on load; it is disabled under
-  `prefers-reduced-motion`.
+- Animation is limited to the hero headline widening once on load and the slideshow's
+  crossfade; both are disabled under `prefers-reduced-motion`.
 - Every text/background pair in the palette meets WCAG AA contrast.

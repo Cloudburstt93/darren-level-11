@@ -227,32 +227,43 @@
     <div class="wrap">
       <h2 id="work-title">Recent work</h2>
       <div class="carousel" id="work-carousel" aria-roledescription="carousel" aria-label="Recent work, one photograph at a time">
-        <div class="carousel-stage">
-          <button type="button" class="carousel-slide" id="carousel-slide" aria-label="Open this photograph in the photo viewer">
-            <picture>
-              <source type="image/webp" id="carousel-source"
-                      srcset="images/family-aspens-golden-800.webp 800w, images/family-aspens-golden-1600.webp 1600w"
-                      sizes="(min-width: 780px) 720px, 92vw">
-              <img id="carousel-image" src="images/family-aspens-golden-800.jpg"
-                   srcset="images/family-aspens-golden-800.jpg 800w, images/family-aspens-golden-1600.jpg 1600w"
-                   sizes="(min-width: 780px) 720px, 92vw"
-                   width="1600" height="1067" alt="Family of four talking and holding hands in a grove of bright yellow aspens" decoding="async">
-            </picture>
-          </button>
+        <div class="carousel-frame">
+          <div class="carousel-stage" id="carousel-stage">
+            <button type="button" class="carousel-slide" id="carousel-slide" aria-label="Open this photograph in the photo viewer">
+              <picture class="carousel-layer is-current" id="carousel-layer-a">
+                <source type="image/webp" id="carousel-source-a"
+                        srcset="images/family-aspens-golden-800.webp 800w, images/family-aspens-golden-1600.webp 1600w"
+                        sizes="(min-width: 800px) 748px, 92vw">
+                <img id="carousel-image-a" src="images/family-aspens-golden-800.jpg"
+                     srcset="images/family-aspens-golden-800.jpg 800w, images/family-aspens-golden-1600.jpg 1600w"
+                     sizes="(min-width: 800px) 748px, 92vw"
+                     width="1600" height="1067" alt="Family of four talking and holding hands in a grove of bright yellow aspens" decoding="async">
+              </picture>
+              <picture class="carousel-layer" id="carousel-layer-b" aria-hidden="true">
+                <source type="image/webp" id="carousel-source-b"
+                        srcset="images/family-aspens-golden-800.webp 800w, images/family-aspens-golden-1600.webp 1600w"
+                        sizes="(min-width: 800px) 748px, 92vw">
+                <img id="carousel-image-b" src="images/family-aspens-golden-800.jpg"
+                     srcset="images/family-aspens-golden-800.jpg 800w, images/family-aspens-golden-1600.jpg 1600w"
+                     sizes="(min-width: 800px) 748px, 92vw"
+                     width="1600" height="1067" alt="" decoding="async">
+              </picture>
+            </button>
+            <div class="carousel-controls">
+              <button type="button" class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Previous photo">
+                <span aria-hidden="true">&#8249;</span>
+              </button>
+              <button type="button" class="carousel-btn carousel-play" id="carousel-play"
+                      aria-pressed="true" aria-label="Pause slideshow">
+                <span id="carousel-play-icon" aria-hidden="true">&#10074;&#10074;</span>
+              </button>
+              <button type="button" class="carousel-btn carousel-next" id="carousel-next" aria-label="Next photo">
+                <span aria-hidden="true">&#8250;</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="carousel-controls">
-          <button type="button" class="carousel-btn" id="carousel-prev" aria-label="Previous photo">
-            <span aria-hidden="true">‹</span>
-          </button>
-          <button type="button" class="carousel-btn carousel-play" id="carousel-play"
-                  aria-pressed="true" aria-label="Pause slideshow">
-            <span id="carousel-play-icon" aria-hidden="true">&#10074;&#10074;</span>
-          </button>
-          <p class="carousel-counter" id="carousel-counter" aria-live="off">1 of 19</p>
-          <button type="button" class="carousel-btn" id="carousel-next" aria-label="Next photo">
-            <span aria-hidden="true">›</span>
-          </button>
-        </div>
+        <p class="carousel-counter" id="carousel-counter" aria-live="off">1 of 19</p>
       </div>
       <script type="application/json" id="work-carousel-photos">[{"jpg800":"images/family-aspens-golden-800.jpg","webp800":"images/family-aspens-golden-800.webp","jpg1600":"images/family-aspens-golden-1600.jpg","webp1600":"images/family-aspens-golden-1600.webp","w":1600,"h":1067,"alt":"Family of four talking and holding hands in a grove of bright yellow aspens"},{"jpg800":"images/senior-studio-egg-chair-800.jpg","webp800":"images/senior-studio-egg-chair-800.webp","jpg1600":"images/senior-studio-egg-chair-1600.jpg","webp1600":"images/senior-studio-egg-chair-1600.webp","w":1600,"h":2399,"alt":"High school senior in a black top and pinstripe trousers seated sideways in a blue and white egg chair"},{"jpg800":"images/girl-plaid-dress-pond-800.jpg","webp800":"images/girl-plaid-dress-pond-800.webp","jpg1600":"images/girl-plaid-dress-pond-1600.jpg","webp1600":"images/girl-plaid-dress-pond-1600.webp","w":1600,"h":2400,"alt":"Young girl in a plaid pinafore standing on a sunlit lawn beside a pond, backlit by low autumn sun"},{"jpg800":"images/family-dark-studio-backdrop-800.jpg","webp800":"images/family-dark-studio-backdrop-800.webp","jpg1600":"images/family-dark-studio-backdrop-1600.jpg","webp1600":"images/family-dark-studio-backdrop-1600.webp","w":1600,"h":2400,"alt":"Family of five laughing together, lit softly against a dark studio backdrop"},{"jpg800":"images/senior-red-polo-railing-800.jpg","webp800":"images/senior-red-polo-railing-800.webp","jpg1600":"images/senior-red-polo-railing-1600.jpg","webp1600":"images/senior-red-polo-railing-1600.webp","w":1600,"h":2399,"alt":"High school senior in a red polo and ball cap leaning on a wooden railing with a canyon wall behind him"},{"jpg800":"images/mother-children-white-studio-800.jpg","webp800":"images/mother-children-white-studio-800.webp","jpg1600":"images/mother-children-white-studio-1600.jpg","webp1600":"images/mother-children-white-studio-1600.webp","w":1600,"h":2399,"alt":"Mother and three children in white shirts and jeans sitting together on a bright white studio backdrop"},{"jpg800":"images/family-canyon-overlook-800.jpg","webp800":"images/family-canyon-overlook-800.webp","jpg1600":"images/family-canyon-overlook-1600.jpg","webp1600":"images/family-canyon-overlook-1600.webp","w":1600,"h":2198,"alt":"Family of four posed on a red rock overlook with canyon spires and a bare tree behind them"},{"jpg800":"images/woman-brown-dress-studio-800.jpg","webp800":"images/woman-brown-dress-studio-800.webp","jpg1600":"images/woman-brown-dress-studio-1600.jpg","webp1600":"images/woman-brown-dress-studio-1600.webp","w":1600,"h":2399,"alt":"Woman in a long brown dress turning toward a warm rim light against a dark studio background"},{"jpg800":"images/couple-picnic-table-mesa-800.jpg","webp800":"images/couple-picnic-table-mesa-800.webp","jpg1600":"images/couple-picnic-table-mesa-1600.jpg","webp1600":"images/couple-picnic-table-mesa-1600.webp","w":1600,"h":1067,"alt":"Couple sitting close on a picnic table in an open field with a mesa on the horizon"},{"jpg800":"images/teen-siblings-studio-800.jpg","webp800":"images/teen-siblings-studio-800.webp","jpg1600":"images/teen-siblings-studio-1600.jpg","webp1600":"images/teen-siblings-studio-1600.webp","w":1600,"h":2399,"alt":"Two teenagers posed together, one leaning over the other's shoulder, on a mottled gray studio backdrop"},{"jpg800":"images/portrait-downtown-columns-800.jpg","webp800":"images/portrait-downtown-columns-800.webp","jpg1600":"images/portrait-downtown-columns-1600.jpg","webp1600":"images/portrait-downtown-columns-1600.webp","w":1600,"h":2383,"alt":"Person in a white fur jacket and red top sitting on downtown steps in front of tall stone columns"},{"jpg800":"images/family-western-dark-studio-800.jpg","webp800":"images/family-western-dark-studio-800.webp","jpg1600":"images/family-western-dark-studio-1600.jpg","webp1600":"images/family-western-dark-studio-1600.webp","w":1600,"h":2400,"alt":"Family of four in western hats and jackets, lit low and warm on a dark studio backdrop"},{"jpg800":"images/family-park-autumn-light-800.jpg","webp800":"images/family-park-autumn-light-800.webp","jpg1600":"images/family-park-autumn-light-1600.jpg","webp1600":"images/family-park-autumn-light-1600.webp","w":1600,"h":2400,"alt":"Family of four holding a baby in a park, standing in fallen yellow leaves with the sun behind them"},{"jpg800":"images/boy-white-studio-chair-800.jpg","webp800":"images/boy-white-studio-chair-800.webp","jpg1600":"images/boy-white-studio-chair-1600.jpg","webp1600":"images/boy-white-studio-chair-1600.webp","w":1600,"h":2399,"alt":"Young boy in a dark overshirt standing with one hand on a small white chair, white studio backdrop"},{"jpg800":"images/couple-spring-trees-800.jpg","webp800":"images/couple-spring-trees-800.webp","jpg1600":"images/couple-spring-trees-1600.jpg","webp1600":"images/couple-spring-trees-1600.webp","w":1600,"h":2399,"alt":"Couple dressed in black looking at each other on a tree-lined walk in spring light"},{"jpg800":"images/portrait-city-tower-800.jpg","webp800":"images/portrait-city-tower-800.webp","jpg1600":"images/portrait-city-tower-1600.jpg","webp1600":"images/portrait-city-tower-1600.webp","w":1600,"h":2399,"alt":"Man in a graphic tee and cap photographed from a low angle in front of a glass office tower"},{"jpg800":"images/costume-portrait-night-800.jpg","webp800":"images/costume-portrait-night-800.webp","jpg1600":"images/costume-portrait-night-1600.jpg","webp1600":"images/costume-portrait-night-1600.webp","w":1600,"h":2400,"alt":"Two people in costume, one in a long coat and beard, the other in a robe and striped scarf, under an amber-lit walkway at night"},{"jpg800":"images/western-portrait-mountains-800.jpg","webp800":"images/western-portrait-mountains-800.webp","jpg1600":"images/western-portrait-mountains-1600.jpg","webp1600":"images/western-portrait-mountains-1600.webp","w":1600,"h":2399,"alt":"Woman in a tan corset and white skirt kneeling in sagebrush with snow-dusted mountains behind her"},{"jpg800":"images/family-aspens-back-to-back-800.jpg","webp800":"images/family-aspens-back-to-back-800.webp","jpg1600":"images/family-aspens-back-to-back-1600.jpg","webp1600":"images/family-aspens-back-to-back-1600.webp","w":1600,"h":2400,"alt":"Family of four standing back to back among golden aspens, smiling toward the camera"}]</script>
     </div>

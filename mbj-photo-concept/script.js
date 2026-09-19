@@ -331,42 +331,113 @@
     const photos = dataEl ? JSON.parse(dataEl.textContent) : [];
     if (photos.length < 2) { return; }
 
-    const stage = document.getElementById("carousel-slide");
-    const img = document.getElementById("carousel-image");
-    const source = document.getElementById("carousel-source");
+    const stage = document.getElementById("carousel-stage");
+    const slide = document.getElementById("carousel-slide");
     const prevBtn = document.getElementById("carousel-prev");
     const nextBtn = document.getElementById("carousel-next");
     const playBtn = document.getElementById("carousel-play");
     const playIcon = document.getElementById("carousel-play-icon");
     const counter = document.getElementById("carousel-counter");
     const INTERVAL_MS = 5000;
+    const DECODE_CAP_MS = 800;
+    const CONTROLS_MS = 4000;
+
+    const layers = ["a", "b"].map(function (letter) {
+      return {
+        el: document.getElementById("carousel-layer-" + letter),
+        source: document.getElementById("carousel-source-" + letter),
+        img: document.getElementById("carousel-image-" + letter),
+        holds: 0 /* which photo this layer currently has loaded */
+      };
+    });
 
     const reduceMotion = window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const canHover = !window.matchMedia || window.matchMedia("(hover: hover)").matches;
 
-    let index = 0;
+    let active = 0;   /* which layer is on screen */
+    let index = 0;    /* the photo on screen */
+    let queued = 0;   /* the photo the newest transition is heading for */
     let playing = false;
     let timer = null;
+    let seq = 0;      /* lets a newer transition discard an older one's result */
 
-    function renderSlide(direction) {
-      const photo = photos[index];
-      source.srcset = photo.webp800 + " 800w, " + photo.webp1600 + " 1600w";
-      img.srcset = photo.jpg800 + " 800w, " + photo.jpg1600 + " 1600w";
-      img.src = photo.jpg800;
-      img.alt = photo.alt;
-      img.width = photo.w;
-      img.height = photo.h;
-      counter.textContent = (index + 1) + " of " + photos.length;
-      if (direction) {
-        img.classList.remove("enter-next", "enter-prev");
-        void img.offsetWidth; /* restart the animation on repeat clicks */
-        img.classList.add(direction === "next" ? "enter-next" : "enter-prev");
-      }
+    function load(layer, photoIndex) {
+      if (layer.holds === photoIndex) { return; }
+      const photo = photos[photoIndex];
+      layer.source.srcset = photo.webp800 + " 800w, " + photo.webp1600 + " 1600w";
+      layer.img.srcset = photo.jpg800 + " 800w, " + photo.jpg1600 + " 1600w";
+      layer.img.src = photo.jpg800;
+      layer.img.alt = photo.alt;
+      layer.img.width = photo.w;
+      layer.img.height = photo.h;
+      layer.holds = photoIndex;
     }
 
-    function go(newIndex, direction) {
-      index = (newIndex + photos.length) % photos.length;
-      renderSlide(direction);
+    /* Resolves once the layer's photo can be painted on the very next frame.
+       The cap keeps one slow or broken file from stalling the slideshow: the
+       worst case is that it fades in a beat early, which is what the previous
+       version did on every single change. */
+    function ready(layer) {
+      const decoded = layer.img.decode
+        ? layer.img.decode().catch(function () {})
+        : Promise.resolve();
+      return Promise.race([decoded, new Promise(function (resolve) {
+        window.setTimeout(resolve, DECODE_CAP_MS);
+      })]);
+    }
+
+    /* Swaps which layer is on screen. Everything here runs in one frame, with
+       the incoming photo already decoded, so the change reads as a single
+       crossfade instead of the old photo showing through the animation. */
+    function swap(direction) {
+      const incoming = layers[1 - active];
+      const outgoing = layers[active];
+
+      incoming.el.classList.add("no-anim");
+      incoming.el.classList.remove("from-next", "from-prev");
+      outgoing.el.classList.remove("from-next", "from-prev");
+      if (direction && !reduceMotion) {
+        /* The new photo settles in from the side it came from; the old one
+           drifts out the other way. */
+        incoming.el.classList.add(direction === "next" ? "from-next" : "from-prev");
+        outgoing.el.classList.add(direction === "next" ? "from-prev" : "from-next");
+      }
+      void incoming.el.offsetWidth; /* land the starting offset without animating it */
+      incoming.el.classList.remove("no-anim");
+
+      outgoing.el.classList.remove("is-current");
+      outgoing.el.setAttribute("aria-hidden", "true");
+      incoming.el.classList.add("is-current");
+      incoming.el.removeAttribute("aria-hidden");
+      active = 1 - active;
+    }
+
+    function show(photoIndex, direction) {
+      const to = (photoIndex + photos.length) % photos.length;
+      const token = ++seq;
+      const incoming = layers[1 - active];
+      queued = to;
+
+      /* If this layer is still fading out from the last change, cut the fade
+         dead before reusing it — otherwise loading the next photo into it
+         would swap the picture mid-fade, in plain view. */
+      incoming.el.classList.add("no-anim");
+      void incoming.el.offsetWidth;
+
+      load(incoming, to);
+      ready(incoming).then(function () {
+        if (token !== seq) { return; } /* a newer change already took over */
+        index = to;
+        swap(direction);
+        counter.textContent = (index + 1) + " of " + photos.length;
+        /* Park the photo after this one on the now-idle layer so the next
+           change has nothing left to fetch or decode. The wait outlasts the
+           crossfade, which is still showing that layer. */
+        window.setTimeout(function () {
+          if (token === seq) { load(layers[1 - active], (index + 1) % photos.length); }
+        }, 700);
+      });
     }
 
     function stopAutoplay() {
@@ -375,7 +446,7 @@
 
     function setPlaying(value) {
       playing = value;
-      playIcon.textContent = playing ? "\u2759\u2759" : "\u25B6";
+      playIcon.textContent = playing ? "❙❙" : "▶";
       playBtn.setAttribute("aria-label", playing ? "Pause slideshow" : "Play slideshow");
       playBtn.setAttribute("aria-pressed", playing ? "true" : "false");
       /* Don't make the counter a live region while it's changing on its own
@@ -383,19 +454,46 @@
          nobody asked for. It becomes live once the visitor takes control. */
       counter.setAttribute("aria-live", playing ? "off" : "polite");
       stopAutoplay();
-      if (playing) { timer = window.setInterval(function () { go(index + 1, "next"); }, INTERVAL_MS); }
+      if (playing) { timer = window.setInterval(function () { show(queued + 1, "next"); }, INTERVAL_MS); }
     }
 
     /* Manual interaction stops autoplay for good, matching normal carousel
        etiquette: once a visitor takes the wheel, it stays theirs. */
     function manual(direction) {
-      go(direction === "next" ? index + 1 : index - 1, direction);
+      show(queued + (direction === "next" ? 1 : -1), direction);
       if (playing) { setPlaying(false); }
     }
 
-    prevBtn.addEventListener("click", function () { manual("prev"); });
-    nextBtn.addEventListener("click", function () { manual("next"); });
-    playBtn.addEventListener("click", function () { setPlaying(!playing); });
+    /* The controls sit on the photo and stay invisible until someone reaches
+       for them. Hover and keyboard focus are handled in CSS; this covers touch,
+       where there is no hover to reveal them with. */
+    let hideControls = null;
+    function flashControls() {
+      if (canHover) { return; } /* hover and focus already handle it in CSS */
+      stage.classList.add("controls-visible");
+      if (hideControls) { window.clearTimeout(hideControls); }
+      hideControls = window.setTimeout(function () {
+        stage.classList.remove("controls-visible");
+      }, CONTROLS_MS);
+    }
+
+    prevBtn.addEventListener("click", function () { manual("prev"); flashControls(); });
+    nextBtn.addEventListener("click", function () { manual("next"); flashControls(); });
+    playBtn.addEventListener("click", function () { setPlaying(!playing); flashControls(); });
+
+    if (!canHover) {
+      /* Registered before the lightbox's own handler below, so it can take the
+         first tap: on a touch screen that tap brings the controls up rather
+         than jumping straight into the photo viewer. */
+      slide.addEventListener("click", function (event) {
+        const alreadyUp = stage.classList.contains("controls-visible");
+        flashControls();
+        if (!alreadyUp) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      });
+    }
 
     let touchStartX = null;
     root.addEventListener("touchstart", function (event) {
@@ -404,7 +502,7 @@
     root.addEventListener("touchend", function (event) {
       if (touchStartX === null) { return; }
       const dx = event.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(dx) > 40) { manual(dx < 0 ? "next" : "prev"); }
+      if (Math.abs(dx) > 40) { manual(dx < 0 ? "next" : "prev"); flashControls(); }
       touchStartX = null;
     }, { passive: true });
 
@@ -413,12 +511,22 @@
       if (event.key === "ArrowRight") { event.preventDefault(); manual("next"); }
     });
 
-    renderSlide(null);
+    /* The second photo waits until the page itself has finished loading — a
+       carousel below the fold has no business competing with the hero for
+       bandwidth, and autoplay doesn't move for another five seconds. */
+    function primeSecond() {
+      window.setTimeout(function () {
+        if (seq === 0) { load(layers[1 - active], 1); }
+      }, 400);
+    }
+    if (document.readyState === "complete") { primeSecond(); }
+    else { window.addEventListener("load", primeSecond); }
+
     setPlaying(!reduceMotion); /* never autostart motion someone asked to reduce */
 
     wireLightbox(
       photos.map(function (p) { return { jpg: p.jpg1600, webp: p.webp1600, alt: p.alt }; }),
-      [{ el: stage, index: function () { return index; } }]
+      [{ el: slide, index: function () { return index; } }]
     );
   }
 })();
