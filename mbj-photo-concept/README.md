@@ -107,14 +107,18 @@ If the figure ever changes, it lives in two marked places:
 5. **Decide how booking works.** Right now "Pick a time on my calendar" links out to
    Marco's existing Wix booking page so nothing he relies on is lost. At launch,
    either embed that calendar on this page or replace it with a Cal.com embed.
-6. **Give the booking form an endpoint.** Put a Formspree
-   (`https://formspree.io/f/xxxxxxx`) or Web3Forms (`https://api.web3forms.com/submit`,
-   plus a hidden `access_key` field) URL on the form's own `action` attribute in
-   `index.html` — `FORM_ENDPOINT` in the page generator writes it there. It lives on
-   the form rather than in the script so the form still posts if JavaScript fails to
-   load; `script.js` reads it from the action and enhances the submit with inline
-   validation and the in-page confirmation. While it is empty the form validates,
-   confirms without sending, and a `<noscript>` note says so.
+6. **Booking form endpoint — wired for the pitch, revisit before real launch.** The
+   form posts to a Formspree endpoint (`https://formspree.io/f/mwlppjon`), confirmed
+   working with a real test submission (`{"ok":true}`, HTTP 200). It lives on the
+   form's own `action` attribute in `index.html` — `FORM_ENDPOINT` in the page
+   generator writes it there, so the form still posts if JavaScript fails to load;
+   `script.js` reads it from the action and enhances the submit with inline
+   validation and the in-page confirmation.
+   **Before this is Marco's real site:** that Formspree account notifies HardyWired
+   Tech's email, not Marco's. Either move the form to an account he controls, or swap
+   in a fresh endpoint and update `FORM_ENDPOINT` — otherwise his inquiries land in
+   the wrong inbox. If Formspree ever asks to confirm a first submission by email,
+   that has to happen before the form accepts real ones automatically.
 7. **Add real contact details** — phone and email. Neither appears anywhere on his
    current site, so there was nothing to carry over.
 8. **Add a photo of Marco and two lines about him** to the "Moments that become
