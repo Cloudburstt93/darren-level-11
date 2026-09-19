@@ -567,24 +567,23 @@ h3 {
 
 .carousel { margin-top: clamp(36px, 4.5vw, 56px); }
 
-/* A gallery mat: the photo sits on a board with a hairline rule around it and
-   carries its own thin edge, so it reads as a mounted print instead of an
-   image bleeding into the page. Flat fields and 1px rules only — no shadow,
-   no rounded corners — which is the same language as the rest of the page. */
+/* A framed print: a deep field for the photo to sit on, its own thin edge
+   against that field, and a hairline standing off the outside the way a print
+   is lined on a mount. Flat fields and 1px rules only — no shadow, no rounded
+   corners — which is the language the rest of the page is built in. The outer
+   rule is an outline rather than a border so it takes no space and can't push
+   the layout around. */
 .carousel-frame {
   max-width: 780px;
   margin: 0 auto;
   padding: clamp(8px, 1vw, 12px);
   background: var(--carousel-field);
-  /* A framed print: a deep field for the photo to sit on, and a hairline
-     standing off it on the paper, the way a print is lined on a mount. The
-     outline takes no space, so it can't push the layout around. */
   outline: 1px solid var(--carousel-rule);
   outline-offset: clamp(6px, 0.8vw, 10px);
 }
 
 /* Square rather than favoring one orientation: the source photos are a mix
-   of portrait and landscape, and a square stage keeps the mat reasonably even
+   of portrait and landscape, and a square stage keeps the surround reasonably even
    either way, instead of badly squeezing whichever orientation the box doesn't
    match (verified against both a 3:2 and a 4:5 box first — both left one
    orientation using well under half the frame). */
